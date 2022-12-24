@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "Automata (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "Automata (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}

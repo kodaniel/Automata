@@ -1,0 +1,112 @@
+﻿<Page
+    x:Class="Automata.Views.WorkflowsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:Automata.Behaviors"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="using:Automata.Views"
+    xmlns:vm="using:Automata.ViewModels"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <DataTemplate x:Key="ItemTemplate" x:DataType="vm:WorkflowDetailsViewModel">
+            <Grid Height="60">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="{StaticResource SmallLeftMargin}"
+                    VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource ListTitleStyle}" Text="{x:Bind Name}" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="DetailsTemplate">
+            <Grid>
+                <views:WorkflowsDetailControl ListDetailsMenuItem="{Binding}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="NoSelectionContentTemplate">
+            <Grid>
+                <TextBlock
+                    x:Uid="Workflows_NoSelection"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    TextAlignment="Center" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ListHeaderTemplate">
+            <Grid Height="40">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Style="{StaticResource ListTitleStyle}"
+                    Text="{Binding}" />
+                <TextBox Text="{Binding Filter}" />
+            </Grid>
+        </DataTemplate>
+        <DataTemplate x:Key="MinimalListHeaderTemplate">
+            <Grid Height="40">
+                <TextBlock
+                    Margin="96,0,0,0"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource ListTitleStyle}"
+                    Text="{Binding}" />
+                <TextBox Text="Filter" />
+            </Grid>
+        </DataTemplate>
+
+    </Page.Resources>
+
+    <Grid x:Name="ContentArea">
+        <controls:ListDetailsView
+            x:Name="ListDetailsViewControl"
+            x:Uid="Workflows"
+            BackButtonBehavior="Manual"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            CompactModeThresholdWidth="641"
+            DetailsTemplate="{StaticResource DetailsTemplate}"
+            ItemTemplate="{StaticResource ItemTemplate}"
+            ItemsSource="{x:Bind ViewModel.Items}"
+            ListHeaderTemplate="{StaticResource MinimalListHeaderTemplate}"
+            NoSelectionContentTemplate="{StaticResource NoSelectionContentTemplate}"
+            SelectedItem="{x:Bind ViewModel.Current, Mode=TwoWay}"
+            ViewStateChanged="OnViewStateChanged">
+            <controls:ListDetailsView.ListCommandBar>
+                <CommandBar>
+                    <AppBarButton
+                        Command="{x:Bind ViewModel.AddWorkflowCommand}"
+                        Icon="Add"
+                        Label="Add workflow" />
+                </CommandBar>
+            </controls:ListDetailsView.ListCommandBar>
+            <controls:ListDetailsView.DetailsCommandBar>
+                <CommandBar>
+                    <AppBarButton Icon="MailReply" Label="Reply" />
+                    <AppBarButton Icon="MailReplyAll" Label="Reply All" />
+                    <AppBarButton Icon="MailForward" Label="Forward" />
+                </CommandBar>
+            </controls:ListDetailsView.DetailsCommandBar>
+        </controls:ListDetailsView>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState>
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="641" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ListDetailsViewControl.ListHeaderTemplate" Value="{StaticResource ListHeaderTemplate}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</Page>

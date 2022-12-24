@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-Automata.Daemon-f111639f-f56c-45fc-827f-c1faaee90d36</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.50.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Automata.Core2\Automata.Core2.csproj" />
+    <ProjectReference Include="..\Automata.Plugin.Basics\Automata.Plugin.Basics.csproj" />
+    <ProjectReference Include="..\Automata.Plugin.IO\Automata.Plugin.IO.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="$(SolutionDir)\workflow.proto" GrpcServices="Server" Link="Protos\workflow.proto" />
+  </ItemGroup>
+</Project>

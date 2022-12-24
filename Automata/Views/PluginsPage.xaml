@@ -1,0 +1,107 @@
+﻿<Page
+    x:Class="Automata.Views.PluginsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:Automata.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:Automata.ViewModels"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+
+        <converters:EmptyToVisibilityConverter x:Key="EmptyToVisibilityConverter" />
+
+        <DataTemplate x:Key="EventItemTemplate" x:DataType="vm:BlockViewModel">
+            <Grid
+                Margin="2"
+                Padding="8,4"
+                Background="{StaticResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="{StaticResource ControlCornerRadius}"
+                ToolTipService.ToolTip="{x:Bind Description}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Foreground="Orange" Text="{x:Bind Name}" />
+
+                <Grid
+                    Grid.Column="1"
+                    Margin="0"
+                    VerticalAlignment="Top"
+                    Visibility="{x:Bind Description, Converter={StaticResource EmptyToVisibilityConverter}}">
+                    <FontIcon
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="10"
+                        Foreground="Orange"
+                        Glyph="&#xe11b;" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ActionItemTemplate" x:DataType="vm:BlockViewModel">
+            <Grid
+                Margin="2"
+                Padding="8,4"
+                Background="{StaticResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{StaticResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="{StaticResource ControlCornerRadius}"
+                ToolTipService.ToolTip="{x:Bind Description}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Foreground="DeepSkyBlue" Text="{x:Bind Name}" />
+
+                <Grid
+                    Grid.Column="1"
+                    Margin="0"
+                    VerticalAlignment="Top"
+                    Visibility="{x:Bind Description, Converter={StaticResource EmptyToVisibilityConverter}}">
+                    <FontIcon
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="10"
+                        Foreground="DeepSkyBlue"
+                        Glyph="&#xe11b;" />
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <StackLayout x:Key="HorizontalStackLayout" Orientation="Horizontal" />
+
+        <DataTemplate x:Key="PluginItemTemplate" x:DataType="vm:PluginViewModel">
+            <Expander
+                Margin="0,0,0,4"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left">
+                <Expander.Header>
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource ListTitleStyle}" Text="{Binding Name}" />
+                        <TextBlock Style="{StaticResource ListSubTitleStyle}" Text="{Binding Description}" />
+                    </StackPanel>
+                </Expander.Header>
+
+                <StackPanel>
+                    <ItemsRepeater
+                        ItemTemplate="{StaticResource EventItemTemplate}"
+                        ItemsSource="{x:Bind Events}"
+                        Layout="{StaticResource HorizontalStackLayout}" />
+                    <ItemsRepeater
+                        ItemTemplate="{StaticResource ActionItemTemplate}"
+                        ItemsSource="{x:Bind Actions}"
+                        Layout="{StaticResource HorizontalStackLayout}" />
+                </StackPanel>
+            </Expander>
+        </DataTemplate>
+
+    </Page.Resources>
+
+    <Grid x:Name="ContentArea">
+        <ItemsControl ItemTemplate="{StaticResource PluginItemTemplate}" ItemsSource="{x:Bind ViewModel.Plugins}" />
+    </Grid>
+</Page>

@@ -1,0 +1,82 @@
+﻿<UserControl
+    x:Class="Automata.Views.WorkflowsDetailControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Automata.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:Automata.ViewModels"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="ActionTemplate" x:DataType="vm:ActionViewModel">
+            <Expander
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                Header="{x:Bind Name, Mode=OneWay}">
+                <ItemsControl ItemsSource="{x:Bind Fields, Mode=OneWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <local:EditorControl Margin="0,4" Editor="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Expander>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer
+            Name="ForegroundElement"
+            HorizontalAlignment="Stretch"
+            IsTabStop="True"
+            VerticalScrollMode="Enabled">
+            <StackPanel>
+                <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
+                    <TextBlock
+                        Margin="{StaticResource SmallLeftMargin}"
+                        VerticalAlignment="Center"
+                        Style="{ThemeResource TitleTextBlockStyle}"
+                        Text="{x:Bind ListDetailsMenuItem.Name, Mode=OneWay}" />
+                </StackPanel>
+                <StackPanel Padding="0,15,0,0">
+                    <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Event" />
+
+                    <Expander
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        Header="{x:Bind ListDetailsMenuItem.Event.Name, Mode=OneWay}">
+                        <ItemsControl ItemsSource="{x:Bind ListDetailsMenuItem.Event.Fields, Mode=OneWay}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <local:EditorControl Margin="0,4" Editor="{Binding}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+
+                    <TextBlock Style="{StaticResource DetailSubTitleStyle}" Text="Actions" />
+
+                    <ItemsControl ItemTemplate="{StaticResource ActionTemplate}" ItemsSource="{x:Bind ListDetailsMenuItem.Actions, Mode=OneWay}" />
+
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="1">
+            <CommandBar>
+                <AppBarButton Icon="Save" Label="Save" />
+                <AppBarButton Icon="Cancel" Label="Cancel" />
+                <AppBarButton
+                    Foreground="Red"
+                    Icon="Delete"
+                    Label="Delete" />
+            </CommandBar>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,52 @@
+﻿<Page
+    x:Class="Automata.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="using:Automata.Models"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <Style x:Key="ItemStyle" TargetType="Grid">
+            <Setter Property="Width" Value="360" />
+            <Setter Property="Height" Value="90" />
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+        </Style>
+
+        <DataTemplate x:Key="WorkflowHistoryItemTemplate" x:DataType="model:WorkflowHistory">
+            <Grid Style="{StaticResource ItemStyle}">
+                <StackPanel>
+                    <!--<TextBlock Style="{StaticResource BodyStrongTextBlockStyle}" Text="{x:Bind Workflow.Name}" />-->
+                    <TextBlock Text="{x:Bind When}" />
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid x:Name="ContentArea">
+        <StackPanel>
+            <Grid HorizontalAlignment="Left" Style="{StaticResource ItemStyle}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Stop or start workflows" />
+                <ToggleButton Grid.Column="1" IsChecked="{x:Bind ViewModel.WorkflowsEnabled, Mode=TwoWay}">
+                    <SymbolIcon Symbol="Play" />
+                </ToggleButton>
+            </Grid>
+
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Executed workflows" />
+            <ItemsControl
+                HorizontalAlignment="Left"
+                ItemTemplate="{StaticResource WorkflowHistoryItemTemplate}"
+                ItemsSource="{x:Bind ViewModel.WorkflowHistory}" />
+        </StackPanel>
+    </Grid>
+</Page>

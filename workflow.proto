@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package automata.workflow;
+
+// The workflow service definition.
+service WorkflowHandler {
+	// Start workflow
+	rpc Start (WorkflowRequest) returns (WorkflowResponse);
+	// Stop workflow
+	rpc Stop (WorkflowRequest) returns (WorkflowResponse);
+	// List all workflows
+	rpc ListWorkflows (google.protobuf.Empty) returns (stream WorkflowMessage);
+}
+
+enum WorkflowStatus {
+	DISABLED = 0;
+	ENABLED = 1;
+}
+
+message WorkflowRequest {
+	string id = 1;
+}
+
+message WorkflowResponse {
+	bool success = 1;
+	WorkflowMessage data = 2;
+}
+
+message WorkflowMessage {
+	string id = 1;
+	string name = 2;
+	WorkflowStatus status = 3;
+	string event_body = 4;
+	repeated string actions_body = 5;
+}
