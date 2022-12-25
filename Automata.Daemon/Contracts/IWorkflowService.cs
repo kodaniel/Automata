@@ -8,9 +8,9 @@ public interface IWorkflowService
 
     IReadOnlyCollection<WorkflowArgs> Workflows { get; }
 
-    void Start();
-    void Stop();
+    Task StartAsync();
+    Task StopAsync();
     WorkflowArgs? Get(string id);
-    void AddWorkflow(WorkflowArgs workflow);
-    bool RemoveWorkflow(Guid workflowId);
+    Task AddWorkflowAsync(WorkflowArgs workflow);
+    Task<bool> RemoveWorkflowAsync(Guid workflowId);
 }

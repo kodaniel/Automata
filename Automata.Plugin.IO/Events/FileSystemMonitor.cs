@@ -44,6 +44,9 @@ public class FileSystemMonitor : BaseEventArgs
     {
         base.StartListener(callback);
 
+        if (!Directory.Exists(Filter.Value))
+            return;
+
         watcher = new FileSystemWatcher();
         watcher.Path = Folder.Value;
         watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size;

@@ -5,6 +5,7 @@ using Automata.Daemon.Services;
 using Automata.Daemon.Models;
 using Microsoft.AspNetCore.Builder;
 using System.Reflection;
+using Automata.Daemon.Grpc;
 
 namespace Automata.Daemon
 {
@@ -15,7 +16,7 @@ namespace Automata.Daemon
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddGrpc();
             builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            builder.Services.AddHostedService<Worker>();
+            builder.Services.AddHostedService<ActivationService>();
 
             builder.Services.AddSingleton<AutomataController>();
             builder.Services.AddSingleton<PluginService>();
@@ -25,21 +26,6 @@ namespace Automata.Daemon
 
             builder.Services.Configure<LocalSettingsOptions>(builder.Configuration.GetSection(nameof(LocalSettingsOptions)));
 
-            //.ConfigureServices((context, services) =>
-            //{
-            //    services.AddGrpc();
-            //    services.AddSingleton<WorkflowHandlerService>();
-
-            //    services.AddHostedService<Worker>();
-
-            //    services.AddSingleton<AutomataController>();
-            //    services.AddSingleton<PluginService>();
-            //    services.AddSingleton<IWorkflowService, WorkflowService>();
-            //    services.AddSingleton<IFileService, FileService>();
-            //    services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
-
-            //    services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
-            //})
             var app = builder.Build();
 
             app.MapGrpcService<WorkflowEndpointService>();

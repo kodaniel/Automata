@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
-using Automata.Core.Helpers;
 using Automata.Daemon.Contracts;
-using Automata.Daemon.Models;
 using Automata.Workflow;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using System.Text;
 
-namespace Automata.Daemon.Services;
+namespace Automata.Daemon.Grpc;
 
 internal class WorkflowEndpointService : WorkflowHandler.WorkflowHandlerBase
 {
@@ -24,23 +21,29 @@ internal class WorkflowEndpointService : WorkflowHandler.WorkflowHandlerBase
 
     public override Task<WorkflowResponse> Start(WorkflowRequest request, ServerCallContext context)
     {
+        _logger.LogInformation($"Begin grpc call {nameof(WorkflowEndpointService.Start)} for workflow id {request.Id}");
+
         var success = false;
         var data = new WorkflowMessage();
 
         var workflow = _workflowService.Get(request.Id);
-        if (workflow is null)
+        if (workflow != null)
         {
-            _logger.LogError("Invalid workflow id.");
+            workflow.IsEnabled = true;
+            
+            context.Status = new Status(StatusCode.OK, $"Workflow with id {request.Id} has been started");
+
+            return Task.FromResult(new WorkflowResponse
+            {
+                Data = _mapper.Map<WorkflowMessage>(workflow)
+            });
         }
         else
         {
-            workflow.IsEnabled = true;
-            success = true;
-            data = _mapper.Map<WorkflowMessage>(workflow);
-            _logger.LogInformation("Workflow started.");
+            context.Status = new Status(StatusCode.NotFound, $"Workflow with id {request.Id} does not exist"); 
         }
 
-        return Task.FromResult(new WorkflowResponse { Success = success, Data = data });
+        return Task.FromResult(new WorkflowResponse());
     }
 
     public override Task<WorkflowResponse> Stop(WorkflowRequest request, ServerCallContext context)

@@ -5,7 +5,7 @@ using Automata.Daemon.Models;
 
 namespace Automata.Daemon.Services;
 
-public class AutomataController
+public class AutomataController : IDisposable
 {
     private const string AutomataArgsKey = "AppArgsRoot";
 
@@ -44,7 +44,7 @@ public class AutomataController
 
         foreach (var workflow in Args.Workflows)
         {
-            _workflowService.AddWorkflow(workflow);
+            await _workflowService.AddWorkflowAsync(workflow);
         }
 
         await Task.CompletedTask;
@@ -61,7 +61,7 @@ public class AutomataController
 
     private async Task SaveArgsInSettingsAsync(AutomataArgs args)
     {
-        await _localSettingsService.SaveSettingAsync(AutomataArgsKey, Args);
+        await _localSettingsService.SaveSettingAsync(AutomataArgsKey, args);
     }
 
     private async Task<AutomataArgs> LoadArgsFromSettingsAsync()
@@ -72,7 +72,12 @@ public class AutomataController
             return args;
         }
 
-        return SampleAutomataData.GetSampleAutomata(); //new AutomataArgs();
+        return new AutomataArgs();
+    }
+
+    public async void Dispose()
+    {
+        await SaveArgsInSettingsAsync(Args);
     }
 
     #region PluginCollection

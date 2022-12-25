@@ -1,8 +1,10 @@
 ﻿using Automata.Core.Contracts.Services;
-using Automata.Core.Helpers;
 using Automata.Daemon.Models;
 using Automata.Daemon.Contracts;
 using Microsoft.Extensions.Options;
+using Automata.Core.Helpers;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Automata.Daemon.Services;
 
@@ -18,7 +20,7 @@ public class LocalSettingsService : ILocalSettingsService
     private readonly string _applicationDataFolder;
     private readonly string _localsettingsFile;
 
-    private IDictionary<string, object> _settings;
+    private IDictionary<string, object?> _settings;
 
     private bool _isInitialized;
 
@@ -30,14 +32,14 @@ public class LocalSettingsService : ILocalSettingsService
         _applicationDataFolder = Path.Combine(_localApplicationData, _options.ApplicationDataFolder ?? _defaultApplicationDataFolder);
         _localsettingsFile = _options.LocalSettingsFile ?? _defaultLocalSettingsFile;
 
-        _settings = new Dictionary<string, object>();
+        _settings = new Dictionary<string, object?>();
     }
 
     private async Task InitializeAsync()
     {
         if (!_isInitialized)
         {
-            _settings = await Task.Run(() => _fileService.Read<IDictionary<string, object>>(_applicationDataFolder, _localsettingsFile)) ?? new Dictionary<string, object>();
+            _settings = await _fileService.ReadAsync<IDictionary<string, object?>>(_applicationDataFolder, _localsettingsFile) ?? new Dictionary<string, object?>();
 
             _isInitialized = true;
         }
@@ -47,9 +49,11 @@ public class LocalSettingsService : ILocalSettingsService
     {
         await InitializeAsync();
 
-        if (_settings != null && _settings.TryGetValue(key, out var obj))
+        if (_settings != null && _settings.TryGetValue(key, out var obj) && obj is not null)
         {
-            return await Json.ToObjectAsync<T>((string)obj);
+            var jobj = (JObject)obj;
+            var o = jobj.ToObject<T>();
+            return await Json.ToObjectAsync<T>(obj.ToString());
         }
 
         return default;
@@ -59,8 +63,8 @@ public class LocalSettingsService : ILocalSettingsService
     {
         await InitializeAsync();
 
-        _settings[key] = await Json.StringifyAsync(value!);
+        _settings[key] = value;
 
-        await Task.Run(() => _fileService.Save(_applicationDataFolder, _localsettingsFile, _settings));
+        await _fileService.SaveAsync(_applicationDataFolder, _localsettingsFile, _settings);
     }
 }
